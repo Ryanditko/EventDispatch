@@ -25,9 +25,10 @@ jobs:
     
     - name: Install Leiningen
       run: |
-        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o lein
-        chmod +x lein
-        ./lein -v
+        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /tmp/lein
+        chmod +x /tmp/lein
+        mkdir -p ~/.lein
+        /tmp/lein self-install
     
     - name: Cache Maven dependencies
       uses: actions/cache@v3
@@ -38,10 +39,10 @@ jobs:
           ${{ runner.os }}-maven-
     
     - name: Run tests
-      run: ./lein test
+      run: lein test
     
     - name: Build uberjar
-      run: ./lein uberjar
+      run: lein uberjar
     
     - name: Upload test results
       if: always()

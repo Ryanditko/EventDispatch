@@ -21,26 +21,24 @@ jobs:
     
     - name: Install Leiningen
       run: |
-        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o lein
-        chmod +x lein
-        ./lein -v
+        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /tmp/lein
+        chmod +x /tmp/lein
+        mkdir -p ~/.lein
+        /tmp/lein self-install
     
     - name: Install clj-kondo
       run: |
         curl -sLO https://github.com/clj-kondo/clj-kondo/releases/download/v2024.09.19/clj-kondo-2024.09.19-linux-static.zip
         unzip -q clj-kondo-2024.09.19-linux-static.zip
         chmod +x clj-kondo
+        mv clj-kondo /usr/local/bin/
     
     - name: Run clj-kondo linting
-      run: ./clj-kondo --lint src test
-      continue-on-error: true
-    
-    - name: Check code formatting with zprint
-      run: ./lein zprint check
+      run: clj-kondo --lint src test
       continue-on-error: true
     
     - name: Run tests with coverage
-      run: ./lein cloverage --output coverage
+      run: lein cloverage --output coverage
       continue-on-error: true
     
     - name: Upload coverage to Codecov

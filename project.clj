@@ -17,8 +17,13 @@
                  [prismatic/schema "1.4.1"]]
   :main event-dispatch.core
   :target-path "target/%s"
+  :plugins [[lein-cloverage "1.2.2"]]
+  :cloverage {:codecov? true
+              :fail-threshold 70}
   :profiles {:dev {:dependencies [[midje "1.10.9"]
                                   [ring/ring-mock "0.4.0"]]
-                   :plugins [[lein-midje "3.2.2"]]}
+                   :plugins [[lein-midje "3.2.2"]
+                             [lein-zprint "0.1.3"]]}
+             :test {:plugins [[lein-cloverage "1.2.2"]]}
              :uberjar {:aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})

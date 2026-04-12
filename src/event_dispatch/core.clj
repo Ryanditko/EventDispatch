@@ -55,15 +55,6 @@
       (log/error (str "Error initializing Kafka: " (.getMessage e)))
       (throw e))))
 
-(defn create-context
-  "Create application context with all adapters"
-  []
-  (let [repo (datomic-repo/->repository @datomic-conn)
-        pub @kafka-publisher]
-    {:repository repo
-     :publisher pub
-     :config-atom (atom {})}))
-
 (defn start-server
   "Start the HTTP server"
   [config]
@@ -71,12 +62,13 @@
     (let [server-config (get config :server)
           port (:port server-config)
           host (:host server-config)
-          context (create-context)
-          wrapped-app (handler/wrap-application (handler/create-routes context))]
+          repo (datomic-repo/->repository @datomic-conn)
+          pub @kafka-publisher
+          routes (handler/create-routes repo pub)]
       (log/info (str "Starting HTTP server on " host ":" port))
-      (let [server (jetty/run-jetty wrapped-app {:port port
-                                                  :host host
-                                                  :join? false})]
+      (let [server (jetty/run-jetty routes {:port port
+                                            :host host
+                                            :join? false})]
         (reset! http-server server)
         (log/info "HTTP server started successfully")
         server))

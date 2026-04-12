@@ -77,7 +77,7 @@
          nil)))
    
    :list-all
-   (fn [& {:keys [limit offset] :or {limit 10 offset 0}}]
+   (fn [limit offset]
      (try
        (log/debug (str "Listing notifications - limit: " limit ", offset: " offset))
        (let [db (d/db conn)
@@ -88,7 +88,6 @@
        (catch Exception e
          (log/error (str "Error listing notifications: " (.getMessage e)))
          [])))})
-
 (defn initialize-schema
   "Initialize Datomic schema for notifications"
   [conn]

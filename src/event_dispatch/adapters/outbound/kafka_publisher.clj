@@ -2,15 +2,14 @@
   (:require [cheshire.core :as json]
             [clojure.tools.logging :as log])
   (:import [org.apache.kafka.clients.producer KafkaProducer ProducerRecord Callback RecordMetadata]
-           [java.util Properties]
-           [java.util.concurrent Future]))
+           [java.util Properties]))
 
 ;; Kafka producer callback for handling async send results
 (defn create-callback
   "Create a Kafka callback for handling send results"
   [event-id]
   (reify Callback
-    (onCompletion [this metadata exception]
+    (onCompletion [_ metadata exception]
       (if exception
         (log/error (str "Error publishing event " event-id ": " (.getMessage exception)))
         (log/info (str "Event " event-id " published to partition "
@@ -19,8 +18,8 @@
 
 ;; Publisher operations map for dependency injection
 (defn ->publisher
+  "Create a publisher map with publish, publish-batch, flush and close operations"
   [bootstrap-servers topic]
-  "Create a publisher map with publish and publish-batch operations"
   (let [props (Properties.)]
     (.put props "bootstrap.servers" bootstrap-servers)
     (.put props "key.serializer" "org.apache.kafka.common.serialization.StringSerializer")
@@ -56,7 +55,7 @@
                    callback (create-callback (:id event))]
                (.send producer record callback)))
            (log/info (str "Batch of " (count events) " events published"))
-           events)
+           events
            (catch Exception e
              (log/error (str "Error publishing batch: " (.getMessage e)))
              (throw e))))
@@ -67,6 +66,7 @@
            (log/debug "Flushing Kafka producer")
            (.flush producer)
            (log/info "Kafka producer flushed")
+           true
            (catch Exception e
              (log/error (str "Error flushing producer: " (.getMessage e)))
              (throw e))))
@@ -77,14 +77,10 @@
            (log/debug "Closing Kafka producer")
            (.close producer)
            (log/info "Kafka producer closed")
+           true
            (catch Exception e
              (log/error (str "Error closing producer: " (.getMessage e)))
-             (throw e))))
-       
-       :producer
-       producer
-       :topic
-       topic})))
+             (throw e))))})))
 
 (defn create-kafka-publisher
   "Deprecated: Use ->publisher instead"

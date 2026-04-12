@@ -1,0 +1,84 @@
+name: Bug Report
+description: Report a bug to help us improve EventDispatch
+title: "[Bug] "
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this bug! Please fill in as much detail as possible.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is
+      placeholder: |
+        When I try to create a notification with X, it results in Y
+    validations:
+      required: true
+  
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Start the application with ...
+        2. Send a POST request to ...
+        3. Observe the error ...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: The notification should be created successfully
+    validations:
+      required: true
+  
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: |
+        The application returned a 500 error with the message:
+        ```
+        Exception in thread "main" java.lang.NullPointerException
+        ...
+        ```
+    validations:
+      required: true
+  
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Information about your environment
+      value: |
+        - OS: 
+        - Java Version: 
+        - Clojure Version: 
+        - EventDispatch Version: 
+    validations:
+      required: true
+  
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant logs or error messages
+      render: clojure
+      placeholder: |
+        Paste error logs here
+  
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem?
+      placeholder: Any other information that might be helpful

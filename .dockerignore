@@ -1,0 +1,11 @@
+target/
+.git/
+.gitignore
+*.md
+node_modules/
+.DS_Store
+*.swp
+*.swo
+*~
+.env
+.env.local

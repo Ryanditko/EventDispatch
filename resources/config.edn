@@ -1,0 +1,18 @@
+{:server
+ {:port #or [#env PORT 8080]
+  :host "0.0.0.0"
+  :join? false}
+
+ :kafka
+ {:bootstrap-servers #or [#env KAFKA_BROKERS "localhost:9092"]
+  :topic "notifications"
+  :consumer-group "event-dispatch-group"
+  :auto-offset-reset "earliest"
+  :enable-auto-commit? false}
+
+ :datomic
+ {:uri #or [#env DATOMIC_URI "datomic:dev://localhost:4334/eventdispatch"]}
+
+ :logging
+ {:level #or [#env LOG_LEVEL :info]
+  :pattern "[%d{ISO8601}] [%thread] %-5level %logger{36} - %msg%n"}}

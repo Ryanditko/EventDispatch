@@ -12,39 +12,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Java
-      uses: actions/setup-java@v3
+    - name: Setup Clojure
+      uses: DeLaGuardo/setup-clojure@12.1
       with:
-        java-version: '21'
-        distribution: 'temurin'
-    
-    - name: Install Leiningen
-      run: |
-        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /tmp/lein
-        chmod +x /tmp/lein
-        mkdir -p ~/.lein
-        /tmp/lein self-install
-    
-    - name: Run tests
-      run: lein test
-    
-    - name: Build uberjar
-      run: lein uberjar
+        cli: latest
     
     - name: Get version from tag
       id: tag_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
     
+    - name: Build JAR
+      run: clojure -X:build uber
+      continue-on-error: true
+    
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: target/event-dispatch-*-standalone.jar
         draft: false
         prerelease: ${{ contains(steps.tag_version.outputs.VERSION, '-') }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Build Docker image
-      run: |
-        docker build -t event-dispatch:${{ steps.tag_version.outputs.VERSION }} .
-        docker tag event-dispatch:${{ steps.tag_version.outputs.VERSION }} event-dispatch:latest

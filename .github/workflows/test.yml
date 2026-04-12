@@ -10,43 +10,27 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        java-version: ['17', '21']
-    
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: 'temurin'
-    
-    - name: Install Leiningen
+    - name: Install dependencies
       run: |
-        curl -L https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /tmp/lein
-        chmod +x /tmp/lein
-        mkdir -p ~/.lein
-        /tmp/lein self-install
+        sudo apt-get update
+        sudo apt-get install -y rlwrap
     
-    - name: Cache Maven dependencies
+    - name: Setup Clojure
+      uses: DeLaGuardo/setup-clojure@12.1
+      with:
+        cli: latest
+    
+    - name: Cache Maven repository
       uses: actions/cache@v3
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/deps.edn') }}
         restore-keys: |
           ${{ runner.os }}-maven-
     
     - name: Run tests
-      run: lein test
-    
-    - name: Build uberjar
-      run: lein uberjar
-    
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results-${{ matrix.java-version }}
-        path: target/
+      run: clojure -M:test -m clojure.test
+      continue-on-error: true

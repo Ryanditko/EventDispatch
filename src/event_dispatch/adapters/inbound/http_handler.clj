@@ -112,15 +112,16 @@
   (route/not-found not-found))
 
 (defn create-routes
-  "Create application routes with context (repository and publisher)"
-  [context]
-  (fn [request]
-    (let [routes [(GET "/health" [] health-check)
-                  (POST "/notifications" [] (create-notification-handler context))
-                  (GET "/notifications/:id" [] (get-notification-handler context))
-                  (GET "/notifications" [] (list-notifications-handler context))
-                  (route/not-found not-found)]]
-      ((apply compojure.core/routes routes) request))))
+  "Create application routes with repository and publisher adapters"
+  [repository publisher]
+  (let [context {:repository repository :publisher publisher}]
+    (fn [request]
+      (let [routes [(GET "/health" [] health-check)
+                    (POST "/notifications" [] (create-notification-handler context))
+                    (GET "/notifications/:id" [] (get-notification-handler context))
+                    (GET "/notifications" [] (list-notifications-handler context))
+                    (route/not-found not-found)]]
+        ((apply compojure.core/routes routes) request)))))
 
 (defn wrap-application
   "Wrap the application with middleware"

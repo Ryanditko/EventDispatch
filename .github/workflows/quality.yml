@@ -18,13 +18,5 @@ jobs:
       with:
         cli: latest
     
-    - name: Install clj-kondo
-      run: |
-        curl -sLO https://github.com/clj-kondo/clj-kondo/releases/download/v2024.09.19/clj-kondo-2024.09.19-linux-amd64.zip
-        unzip -q clj-kondo-2024.09.19-linux-amd64.zip
-        chmod +x clj-kondo
-        sudo mv clj-kondo /usr/local/bin/
-    
-    - name: Run clj-kondo linting
-      run: clj-kondo --lint src test
-      continue-on-error: true
+    - name: Run tests
+      run: clojure -M:test

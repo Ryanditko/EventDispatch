@@ -1,6 +1,8 @@
 # EventDispatch
 
-![alt text](docs/assets/event-driven-architecture.png)
+<p align="center">
+  <img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,format=auto,onerror=redirect,quality=80/uploads/publication/logo/3324bc5c-9c57-4860-8d0a-5f63cb57c7b3/ED_New.png" alt="EventDispatch Wallpaper" width="800">
+</p>
 
 EventDispatch is an event-driven notification orchestration service built with Clojure, Kafka, and Datomic. It exposes a REST API to create and manage notifications, publishes events to Kafka for asynchronous processing, and persists an immutable delivery history in Datomic for auditing and analytics.
 
